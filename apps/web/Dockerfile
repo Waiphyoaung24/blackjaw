@@ -1,30 +1,28 @@
 # Dockerfile for the BLACKJAW marketing (Astro static) site
-# Build from the monorepo root so workspace packages resolve:
+# Build from the monorepo root:
 #   docker build --tag web:latest -f ./apps/web/Dockerfile .
 #
-# Dokploy: set Build Type = Dockerfile, Dockerfile path = apps/web/Dockerfile,
-# Build Context = . (repo root), and expose port 80.
+# Dokploy: Build Type = Dockerfile, Dockerfile path = apps/web/Dockerfile,
+# Build Context = . (repo root), Container Port = 3000.
 
-# ---------- Builder stage ----------
 FROM oven/bun:1 AS build
 
 WORKDIR /app
 
-# Copy entire monorepo context (filtered by .dockerignore)
 COPY . .
 
-# Install all workspace deps (needs dev deps for astro + vite build)
 RUN bun install --frozen-lockfile
-
-# Build the static site (output: apps/web/dist)
 RUN bun --filter @repo/web build
 
-# ---------- Runtime stage ----------
-FROM nginx:alpine AS runtime
+# ---------- Runtime ----------
+FROM oven/bun:1-slim AS runtime
 
-COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+WORKDIR /app
 
-EXPOSE 80
+COPY --from=build /app/apps/web/dist ./dist
 
-CMD ["nginx", "-g", "daemon off;"]
+ENV PORT=3000
+EXPOSE 3000
+
+# Serve the static dist folder with a zero-config static server
+CMD ["bunx", "--bun", "serve", "-s", "dist", "-l", "3000"]
