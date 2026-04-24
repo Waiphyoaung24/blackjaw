@@ -1,0 +1,24 @@
+---
+const tiles = [
+  { title: "NEW LAUNCH", href: "#", image: "/blackjaw/collection-new-launch.png" },
+  { title: "BEST SELLERS", href: "#", image: "/blackjaw/collection-best-sellers.png" },
+  { title: "SALE", href: "#", image: "/blackjaw/collection-sale.png" },
+  { title: "SHIRTS", href: "#", image: "/blackjaw/collection-shirts.png" },
+];
+---
+<section class="px-4 lg:px-8 py-12">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {tiles.map((t) => (
+      <a href={t.href} class="group relative block aspect-[3/4] overflow-hidden">
+        <img src={t.image} alt={t.title} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20"></div>
+        <div class="absolute inset-x-0 top-8 text-center">
+          <h3 class="text-white font-[family-name:var(--font-display)] font-black uppercase text-2xl lg:text-3xl tracking-[0.12em]">{t.title}</h3>
+        </div>
+        <div class="absolute inset-x-0 bottom-8 flex justify-center">
+          <span class="inline-flex bg-black text-white rounded-full px-6 py-2.5 text-[10px] tracking-[0.2em] uppercase font-bold">VIEW PRODUCTS</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

@@ -89,3 +89,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+/**
+ * BLACKJAW storefront design tokens.
+ *
+ * These CSS variables back the arbitrary-value Tailwind utilities used in
+ * `components/blackjaw/*.astro` (e.g. `font-[family-name:var(--font-display)]`,
+ * `bg-[color:var(--color-surface-alt)]`). They are scoped to `:root` so they
+ * coexist with the shadcn theme tokens above without conflict.
+ */
+:root {
+  --color-surface-alt: #efefef;
+  --font-display:
+    Montserrat, "GT Standard M", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+}

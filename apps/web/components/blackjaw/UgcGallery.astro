@@ -1,0 +1,23 @@
+---
+const imgs = [
+  "/blackjaw/product-4339-primary.jpg",
+  "/blackjaw/hero-1-desktop.jpg",
+  "/blackjaw/product-4016-primary.jpg",
+  "/blackjaw/product-4339-secondary.jpg",
+  "/blackjaw/hero-2-desktop.jpg",
+  "/blackjaw/product-4016-secondary.jpg",
+];
+---
+<section class="px-4 lg:px-8 py-16">
+  <h2 class="text-center font-[family-name:var(--font-display)] font-black uppercase text-[28px] lg:text-[48px] tracking-[0.1em] mb-10">STILL TALKING ABOUT BLACKJAW</h2>
+  <div class="flex overflow-x-auto sm:grid sm:grid-cols-6 gap-2">
+    {imgs.map((src) => (
+      <div class="relative aspect-square shrink-0 w-64 sm:w-auto overflow-hidden">
+        <img src={src} alt="UGC" class="w-full h-full object-cover" loading="lazy" />
+        <span class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+        </span>
+      </div>
+    ))}
+  </div>
+</section>

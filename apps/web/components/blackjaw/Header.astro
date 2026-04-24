@@ -1,0 +1,58 @@
+---
+const nav = [
+  { text: "PRODUCTS", href: "#" },
+  { text: "SHIRTS", href: "#" },
+  { text: "SHORTS", href: "#" },
+  { text: "JOGGERS", href: "#" },
+  { text: "OUTERWEAR", href: "#" },
+  { text: "ACCESSORIES", href: "#" },
+];
+---
+<header class="sticky top-0 z-50 bg-white border-b border-black/10">
+  <div class="hidden lg:flex items-center justify-between px-8 h-[30px] text-[10.5px] uppercase tracking-[0.14em] text-black/55 border-b border-black/5">
+    <span>Questions? (818) 206-8764</span>
+    <div class="flex items-center gap-5">
+      <span class="hover:text-black cursor-default">US</span>
+      <span class="hover:text-black cursor-default">Europe</span>
+      <span class="hover:text-black cursor-default">UK</span>
+    </div>
+  </div>
+
+  <div class="relative flex items-center justify-between px-4 lg:px-8 h-[76px]">
+    <button class="lg:hidden w-10 h-10 flex items-center justify-center -ml-2" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="hidden lg:block w-[120px]" aria-hidden="true"></div>
+
+    <a
+      href="/"
+      class="wordmark absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[26px] sm:text-[30px] lg:text-[34px] font-black text-black leading-none whitespace-nowrap"
+      style="letter-spacing:.24em;"
+    >BLACKJAW</a>
+
+    <div class="flex items-center gap-1 sm:gap-2">
+      <button aria-label="Search" class="w-9 h-9 flex items-center justify-center hover:opacity-60 transition-opacity">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+      <button aria-label="Account" class="w-9 h-9 hidden sm:flex items-center justify-center hover:opacity-60 transition-opacity">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      </button>
+      <button aria-label="Wishlist" class="w-9 h-9 hidden sm:flex items-center justify-center hover:opacity-60 transition-opacity">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.65 12 21 12 21z"/></svg>
+      </button>
+      <button aria-label="Cart" class="w-9 h-9 flex items-center justify-center relative hover:opacity-60 transition-opacity">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l-1.5 12H7.5L6 7z"/><path d="M9 7a3 3 0 1 1 6 0"/></svg>
+        <span class="absolute -top-0.5 -right-0.5 bg-black text-white text-[9px] font-bold rounded-full w-[18px] h-[18px] flex items-center justify-center">0</span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="hidden lg:flex items-center justify-center gap-8 xl:gap-10 h-[42px] border-t border-black/5 px-8">
+    {nav.map((n) => (
+      <a
+        href={n.href}
+        class="text-[11.5px] font-[family-name:var(--font-display)] font-bold tracking-[0.18em] uppercase whitespace-nowrap hover:opacity-60 transition-opacity"
+      >{n.text}</a>
+    ))}
+  </nav>
+</header>
