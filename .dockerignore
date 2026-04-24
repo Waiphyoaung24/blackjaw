@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+**/.astro
+**/.wrangler
+**/.turbo
+**/.next
+**/.cache
+**/.DS_Store
+**/*.log
+.git
+.github
+.vscode
+.idea
+docs
