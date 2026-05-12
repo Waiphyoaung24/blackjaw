@@ -1,5 +1,6 @@
 ---
 import '@/styles/globals.css';
+import PreLoader from '@/components/blackjaw/PreLoader.astro';
 
 export interface Props {
   title?: string;
@@ -92,6 +93,7 @@ const jsonLd = {
     />
   </head>
   <body class="bg-white">
+    <PreLoader />
     <slot />
   </body>
 </html>
