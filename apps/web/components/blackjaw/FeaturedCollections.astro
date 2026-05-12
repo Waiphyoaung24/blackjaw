@@ -1,15 +1,69 @@
 ---
 import ProductCard from "./ProductCard.astro";
 import { products } from "@/data/products";
+
+const featureImg = encodeURI("/brand/photo_2026-05-12 16.55.07.jpeg");
+const top = products.slice(0, 2);
+const bottom = products.slice(2, 4);
 ---
-<section id="featured" class="py-16 px-4 lg:px-8 max-w-[1440px] mx-auto">
-  <h2 class="text-center font-[family-name:var(--font-display)] font-black uppercase text-[22px] lg:text-[28px] tracking-[0.2em] mb-10">
-    Featured
-  </h2>
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    {products.map((p) => <ProductCard {...p} />)}
+<section id="featured" class="py-20 lg:py-24 px-4 lg:px-8 max-w-[1440px] mx-auto">
+  <div class="border-t border-bj-primary pt-6 mb-12 lg:mb-16 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10 text-[11px] tracking-[0.2em] uppercase">
+    <div>
+      <div class="text-black/55 mb-2">Outfit</div>
+      <div class="text-ink font-semibold">Featured</div>
+    </div>
+    <div class="col-span-1 lg:col-span-2">
+      <div class="text-black/55 mb-2">Why</div>
+      <p class="normal-case tracking-normal text-[13px] text-ink/80 leading-relaxed max-w-[44ch]">
+        Built by Blackjaw for athletes who bite through limits. Signature pieces engineered to never break — designed with care, made to outlast.
+      </p>
+    </div>
+    <div class="text-right">
+      <div class="text-black/55 mb-2">Visit · Shop</div>
+      <a href="#" class="text-ink font-semibold hover:text-bj-primary transition-colors">Shipping & Returns</a>
+    </div>
   </div>
-  <div class="flex justify-center mt-12">
-    <a href="#" class="inline-flex items-center gap-2 border border-ink rounded-full px-10 py-3 text-[11px] tracking-[0.2em] uppercase font-bold hover:bg-bj-primary hover:text-ink hover:border-bj-primary transition-colors">SEE ALL →</a>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 lg:gap-x-6 lg:gap-y-14">
+    {top.map((p, i) => (
+      <div class={i % 2 === 1 ? "[&_img]:scale-[1.7] [&_img]:object-[center_22%]" : ""}>
+        <ProductCard {...p} />
+      </div>
+    ))}
+
+    <a
+      href="#"
+      class="group relative col-span-2 lg:row-span-2 overflow-hidden bg-ink aspect-[4/5]"
+    >
+      <img
+        src={featureImg}
+        alt="Signature Drop"
+        class="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+        loading="lazy"
+      />
+      <div class="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/30 pointer-events-none"></div>
+      <div class="absolute top-5 left-5 text-white text-[10.5px] tracking-[0.24em] uppercase font-semibold flex items-center gap-2">
+        <span class="inline-block w-[5px] h-[5px] rounded-full bg-bj-primary"></span>
+        Signature Drop
+      </div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span class="flex items-center justify-center w-[104px] h-[104px] rounded-full bg-bj-primary text-ink text-[11px] tracking-[0.22em] uppercase font-bold shadow-[0_10px_28px_rgba(0,0,0,.28)] transition-transform duration-300 ease-out group-hover:scale-110">
+          View More
+        </span>
+      </div>
+    </a>
+
+    {bottom.map((p, i) => (
+      <div class={i % 2 === 1 ? "[&_img]:scale-[1.7] [&_img]:object-[center_22%]" : ""}>
+        <ProductCard {...p} />
+      </div>
+    ))}
+  </div>
+
+  <div class="flex justify-center mt-16">
+    <a
+      href="#"
+      class="inline-flex items-center justify-center min-h-[52px] bg-bj-primary text-ink rounded-full px-12 py-3.5 text-[12px] tracking-[0.24em] uppercase font-bold shadow-[0_8px_22px_rgba(0,0,0,.12)] hover:bg-bj-primary-active hover:-translate-y-0.5 transition-all duration-200 ease-out"
+    >See All</a>
   </div>
 </section>

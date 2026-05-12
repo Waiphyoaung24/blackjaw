@@ -10,9 +10,11 @@ import Footer from '@/components/blackjaw/Footer.astro';
 ---
 <BlackjawLayout>
   <AnnouncementBar />
-  <Header />
   <main>
-    <HeroSlideshow />
+    <div class="relative">
+      <Header />
+      <HeroSlideshow />
+    </div>
     <FeaturedCollections />
     <CollectionList />
     <UgcGallery />

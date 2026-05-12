@@ -3,105 +3,76 @@ export interface Product {
   title: string;
   primaryImg: string;
   secondaryImg: string;
-  colors: { name: string; hex: string }[];
-  rating: number;
-  reviewCount: number;
-  isNew?: boolean;
+  price: number;
+  category: "MEN" | "WOMEN";
 }
 
-const SWATCH: Record<string, string> = {
-  grey: "#8a8a8a",
-  black: "#111111",
-  burgundy: "#6b1f2a",
-  navy: "#1c2540",
-  olive: "#5b6236",
-  white: "#f4f4f4",
-  charcoal: "#2c2c2c",
-  sand: "#d6c5a4",
-  forest: "#2c4a32",
-  stone: "#b8aea1",
-};
-const c = (...names: string[]) =>
-  names.map((n) => ({ name: n, hex: SWATCH[n] ?? "#999" }));
-
-const HIM_PRIMARY = "/blackjaw/product-4339-primary.jpg";
-const HIM_SECONDARY = "/blackjaw/product-4339-secondary.jpg";
-const HIM2_PRIMARY = "/blackjaw/product-4016-primary.jpg";
-const HIM2_SECONDARY = "/blackjaw/product-4016-secondary.jpg";
+const IMG = [
+  "/brand/photo_2026-05-12 16.55.01.jpeg",
+  "/brand/photo_2026-05-12 16.55.04.jpeg",
+  "/brand/photo_2026-05-12 16.55.07.jpeg",
+];
+const enc = (p: string) => encodeURI(p);
+const pair = (i: number) => ({
+  primaryImg: enc(IMG[i % IMG.length]),
+  secondaryImg: enc(IMG[(i + 1) % IMG.length]),
+});
 
 export const products: Product[] = [
   {
     code: "4339",
-    title: "Forme Compression Tees",
-    primaryImg: HIM_PRIMARY,
-    secondaryImg: HIM_SECONDARY,
-    colors: c("grey", "black", "burgundy", "navy", "olive"),
-    rating: 4.8,
-    reviewCount: 142,
-    isNew: true,
+    title: "Forme Compression Tee",
+    ...pair(0),
+    price: 38,
+    category: "MEN",
   },
   {
     code: "4016",
-    title: "Natural Cotton Compression Tees",
-    primaryImg: HIM2_PRIMARY,
-    secondaryImg: HIM2_SECONDARY,
-    colors: c("grey", "olive", "black", "white"),
-    rating: 4.7,
-    reviewCount: 98,
+    title: "Natural Cotton Tee",
+    ...pair(1),
+    price: 34,
+    category: "WOMEN",
   },
   {
-    code: "425",
+    code: "0425",
     title: "Immortal Joggers",
-    primaryImg: HIM_PRIMARY,
-    secondaryImg: HIM_SECONDARY,
-    colors: c("black", "charcoal", "navy"),
-    rating: 4.9,
-    reviewCount: 204,
+    ...pair(2),
+    price: 62,
+    category: "MEN",
   },
   {
     code: "4230",
     title: "Athletic Tech Shorts",
-    primaryImg: HIM2_PRIMARY,
-    secondaryImg: HIM2_SECONDARY,
-    colors: c("black", "olive", "sand"),
-    rating: 4.6,
-    reviewCount: 87,
+    ...pair(0),
+    price: 42,
+    category: "WOMEN",
   },
   {
-    code: "502",
+    code: "0502",
     title: "Cutoff Stringer",
-    primaryImg: HIM_PRIMARY,
-    secondaryImg: HIM_SECONDARY,
-    colors: c("white", "black", "burgundy"),
-    rating: 4.5,
-    reviewCount: 64,
+    ...pair(1),
+    price: 28,
+    category: "MEN",
   },
   {
-    code: "501",
+    code: "0501",
     title: "Essential Hoodie",
-    primaryImg: HIM2_PRIMARY,
-    secondaryImg: HIM2_SECONDARY,
-    colors: c("black", "grey", "forest"),
-    rating: 4.8,
-    reviewCount: 178,
-    isNew: true,
+    ...pair(2),
+    price: 78,
+    category: "WOMEN",
   },
   {
     code: "4250",
     title: "Lifter Tank",
-    primaryImg: HIM_PRIMARY,
-    secondaryImg: HIM_SECONDARY,
-    colors: c("black", "white", "olive"),
-    rating: 4.7,
-    reviewCount: 112,
+    ...pair(0),
+    price: 32,
+    category: "MEN",
   },
   {
-    code: "415",
+    code: "0415",
     title: "Pleated Twin Pants",
-    primaryImg: HIM2_PRIMARY,
-    secondaryImg: HIM2_SECONDARY,
-    colors: c("stone", "black", "sand"),
-    rating: 4.6,
-    reviewCount: 75,
+    ...pair(1),
+    price: 68,
+    category: "WOMEN",
   },
 ];
