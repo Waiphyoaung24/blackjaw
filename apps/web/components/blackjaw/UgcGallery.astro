@@ -1,23 +1,109 @@
 ---
-const imgs = [
-  "/blackjaw/product-4339-primary.jpg",
-  "/blackjaw/hero-1-desktop.jpg",
-  "/blackjaw/product-4016-primary.jpg",
-  "/blackjaw/product-4339-secondary.jpg",
-  "/blackjaw/hero-2-desktop.jpg",
-  "/blackjaw/product-4016-secondary.jpg",
+type Tile = {
+  src: string;
+  name: string;
+  tag: string;
+  handle: string;
+  className: string; // grid placement
+};
+
+const tiles: Tile[] = [
+  {
+    src: "/brand/photo_2026-05-13%2003.01.45.jpeg",
+    name: "Meegan",
+    tag: "Lift",
+    handle: "@meegan_lift",
+    className: "sm:col-start-1 sm:row-span-3",
+  },
+  {
+    src: "/brand/photo_2026-05-12%2016.55.14.jpeg",
+    name: "Anaya",
+    tag: "Run",
+    handle: "@anaya_run",
+    className: "sm:col-start-2 sm:row-span-1",
+  },
+  {
+    src: "/brand/photo_2026-05-12%2016.55.19.jpeg",
+    name: "Jonah",
+    tag: "Climb",
+    handle: "@jonah_climb",
+    className: "sm:col-start-3 sm:row-span-1",
+  },
+  {
+    src: "/brand/photo_2026-05-13%2002.58.07.jpeg",
+    name: "Sol",
+    tag: "Pilates",
+    handle: "@sol_pilates",
+    className: "sm:col-start-4 sm:row-span-3",
+  },
+  {
+    src: "/brand/photo_2026-05-13%2002.58.14.jpeg",
+    name: "Marc",
+    tag: "Track",
+    handle: "@marc_track",
+    className: "sm:col-start-2 sm:row-span-2",
+  },
+  {
+    src: "/brand/2026-05-13%2002.57.12.jpg",
+    name: "Iris",
+    tag: "Yoga",
+    handle: "@iris_yoga",
+    className: "sm:col-start-3 sm:row-span-2",
+  },
 ];
 ---
-<section class="lg:px-8 py-12 sm:py-16">
-  <h2 class="text-center font-[family-name:var(--font-display)] font-black uppercase text-[22px] sm:text-[32px] lg:text-[48px] tracking-[0.08em] sm:tracking-[0.1em] mb-8 sm:mb-10 leading-tight px-4">STILL TALKING ABOUT BLACKJAW</h2>
-  <div class="flex overflow-x-auto sm:grid sm:grid-cols-6 gap-px sm:gap-2 snap-x snap-mandatory sm:snap-none scroll-px-0">
-    {imgs.map((src) => (
-      <div class="relative aspect-[4/5] sm:aspect-square shrink-0 w-[88%] sm:w-auto overflow-hidden snap-start first:ml-0 last:mr-0">
-        <img src={src} alt="UGC" class="w-full h-full object-cover" loading="lazy" />
-        <span class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
-        </span>
+
+<section class="bg-black text-white py-16 sm:py-20 lg:py-24">
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-start justify-between gap-6 mb-8 sm:mb-12">
+      <div>
+        <div class="text-[10px] sm:text-[11px] tracking-[0.3em] text-white/40 uppercase mb-4 sm:mb-6">
+          09 — Work 26
+        </div>
+        <h2 class="font-[family-name:var(--font-display)] font-black uppercase leading-[0.95] tracking-[-0.01em] text-[34px] sm:text-[56px] lg:text-[80px]">
+          Still talking<br />about Black Jaw.
+        </h2>
       </div>
-    ))}
+      <div class="hidden sm:block text-right shrink-0">
+        <div class="text-[10px] tracking-[0.3em] text-white/40 uppercase mb-3">
+          Tag to be featured
+        </div>
+        <div class="font-[family-name:var(--font-display)] font-black uppercase text-[20px] lg:text-[28px] tracking-tight">
+          #BlackJaw
+        </div>
+        <div class="text-[10px] tracking-[0.25em] text-white/30 uppercase mt-2">
+          54,802 posts tagged
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-4 grid-rows-[repeat(3,clamp(110px,19vw,280px))] gap-1.5 sm:gap-3"
+    >
+      {
+        tiles.map((t) => (
+          <a
+            href="#"
+            class={`group relative block h-full w-full overflow-hidden rounded-[2px] bg-neutral-900 ${t.className}`}
+          >
+            <img
+              src={t.src}
+              alt={`${t.name} — ${t.tag}`}
+              loading="lazy"
+              class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500 ease-out"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
+
+            <span class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-sm text-white text-[9px] sm:text-[10px] tracking-[0.2em] uppercase px-2 py-1 rounded-[2px]">
+              {t.name} <span class="text-white/40">/</span> {t.tag}
+            </span>
+
+            <span class="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 text-white/85 text-[10px] sm:text-[11px] tracking-[0.15em] lowercase font-medium">
+              {t.handle}
+            </span>
+          </a>
+        ))
+      }
+    </div>
   </div>
 </section>
