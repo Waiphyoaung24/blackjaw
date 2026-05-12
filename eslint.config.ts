@@ -60,7 +60,7 @@ export default defineConfig(
     files: [
       "apps/app/**/*.{ts,tsx}",
       "apps/email/**/*.tsx",
-      "apps/web/**/*.{ts,tsx}",
+      "apps/web/**/*.{ts,tsx,jsx}",
       "packages/ui/**/*.tsx",
     ],
     rules: {
