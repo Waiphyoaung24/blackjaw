@@ -25,11 +25,7 @@ const bottom = products.slice(2, 4);
   </div>
 
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 lg:gap-x-6 lg:gap-y-14">
-    {top.map((p, i) => (
-      <div class={i % 2 === 1 ? "[&_img]:scale-[1.7] [&_img]:object-[center_22%]" : ""}>
-        <ProductCard {...p} />
-      </div>
-    ))}
+    {top.map((p) => <ProductCard {...p} />)}
 
     <a
       href="#"
@@ -53,11 +49,7 @@ const bottom = products.slice(2, 4);
       </div>
     </a>
 
-    {bottom.map((p, i) => (
-      <div class={i % 2 === 1 ? "[&_img]:scale-[1.7] [&_img]:object-[center_22%]" : ""}>
-        <ProductCard {...p} />
-      </div>
-    ))}
+    {bottom.map((p) => <ProductCard {...p} />)}
   </div>
 
   <div class="flex justify-center mt-16">
