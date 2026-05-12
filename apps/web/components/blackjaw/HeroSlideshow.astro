@@ -5,9 +5,21 @@ const slides = [
   { src: "/brand/photo_2026-05-12 16.54.58.jpeg", heading: "RESTOCK", eyebrow: "BACK IN STOCK", cta: "SHOP", href: "#featured" },
 ];
 ---
-<section class="relative w-full h-[100svh] min-h-[560px] overflow-hidden bg-black" data-blackjaw-hero>
+<section
+  class="relative w-full h-[100svh] min-h-[560px] overflow-hidden bg-black group/hero"
+  data-blackjaw-hero
+  aria-roledescription="carousel"
+  aria-label="Featured drops"
+>
   {slides.map((s, i) => (
-    <div class={`blackjaw-slide absolute inset-0 transition-opacity duration-[900ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`} data-idx={i}>
+    <div
+      class={`blackjaw-slide absolute inset-0 transition-opacity duration-[900ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      data-idx={i}
+      role="group"
+      aria-roledescription="slide"
+      aria-label={`${i + 1} of ${slides.length}`}
+      aria-hidden={i === 0 ? "false" : "true"}
+    >
       <picture class="block w-full h-full">
         {s.mobileSrc && (
           <source media="(max-width: 639px)" srcset={encodeURI(s.mobileSrc)} />
@@ -28,25 +40,171 @@ const slides = [
       </div>
     </div>
   ))}
-  <div class="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 w-12 h-[2px] bg-white/30 rounded-full overflow-hidden">
+
+  <button
+    type="button"
+    data-blackjaw-prev
+    aria-label="Previous slide"
+    class="absolute left-3 sm:left-5 lg:left-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/25 sm:bg-black/20 text-white backdrop-blur-md ring-1 ring-white/15 transition-all duration-200 ease-out hover:bg-black/40 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bj-primary sm:opacity-0 sm:group-hover/hero:opacity-100"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+  </button>
+
+  <button
+    type="button"
+    data-blackjaw-next
+    aria-label="Next slide"
+    class="absolute right-3 sm:right-5 lg:right-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/25 sm:bg-black/20 text-white backdrop-blur-md ring-1 ring-white/15 transition-all duration-200 ease-out hover:bg-black/40 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bj-primary sm:opacity-0 sm:group-hover/hero:opacity-100"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+  </button>
+
+  <div
+    class="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 sm:gap-2.5"
+    role="tablist"
+    aria-label="Slide navigation"
+  >
     {slides.map((_, i) => (
-      <span class={`blackjaw-bar absolute inset-y-0 left-0 block w-full bg-white rounded-full transition-opacity duration-500 ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`} data-idx={i}></span>
+      <button
+        type="button"
+        data-blackjaw-dot
+        data-idx={i}
+        role="tab"
+        aria-label={`Go to slide ${i + 1}`}
+        aria-selected={i === 0 ? "true" : "false"}
+        class="group/dot relative h-3 flex items-center px-0.5 focus-visible:outline-none"
+      >
+        <span class={`blackjaw-track block h-[3px] rounded-full overflow-hidden bg-white/30 transition-[width,background-color] duration-500 ease-out ${i === 0 ? "w-10 sm:w-12" : "w-5 sm:w-6"}`}>
+          <span class={`blackjaw-fill block h-full bg-white rounded-full origin-left will-change-transform ${i === 0 ? "blackjaw-fill-active" : "scale-x-0"}`}></span>
+        </span>
+      </button>
     ))}
   </div>
+
+  <span class="sr-only" aria-live="polite" data-blackjaw-live></span>
 </section>
 
+<style>
+  @keyframes blackjaw-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  .blackjaw-fill-active {
+    animation: blackjaw-progress 5000ms linear forwards;
+  }
+  .blackjaw-paused .blackjaw-fill-active {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blackjaw-fill-active { animation: none; transform: scaleX(1); }
+  }
+</style>
+
 <script>
-  const root = document.querySelector("[data-blackjaw-hero]");
+  const root = document.querySelector<HTMLElement>("[data-blackjaw-hero]");
   if (root) {
-    const slides = root.querySelectorAll<HTMLElement>(".blackjaw-slide");
-    const bars = root.querySelectorAll<HTMLElement>(".blackjaw-bar");
-    let i = 0;
-    setInterval(() => {
-      slides[i].style.opacity = "0";
-      bars[i].style.opacity = "0";
-      i = (i + 1) % slides.length;
-      slides[i].style.opacity = "1";
-      bars[i].style.opacity = "1";
-    }, 5000);
+    const slides = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-slide"));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-blackjaw-dot]"));
+    const fills = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-fill"));
+    const tracks = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-track"));
+    const prev = root.querySelector<HTMLButtonElement>("[data-blackjaw-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-blackjaw-next]");
+    const live = root.querySelector<HTMLElement>("[data-blackjaw-live]");
+    const total = slides.length;
+    const DURATION = 5000;
+    let current = 0;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const wActive = ["w-10", "sm:w-12"];
+    const wIdle = ["w-5", "sm:w-6"];
+
+    const render = (nextIdx: number) => {
+      slides.forEach((el, i) => {
+        const active = i === nextIdx;
+        el.style.opacity = active ? "1" : "0";
+        el.classList.toggle("pointer-events-none", !active);
+        el.setAttribute("aria-hidden", active ? "false" : "true");
+      });
+      dots.forEach((d, i) => d.setAttribute("aria-selected", i === nextIdx ? "true" : "false"));
+      tracks.forEach((t, i) => {
+        const active = i === nextIdx;
+        wActive.forEach((c) => t.classList.toggle(c, active));
+        wIdle.forEach((c) => t.classList.toggle(c, !active));
+      });
+      fills.forEach((f, i) => {
+        f.classList.remove("blackjaw-fill-active");
+        f.style.transform = i < nextIdx ? "scaleX(1)" : i > nextIdx ? "scaleX(0)" : "";
+      });
+      // restart the active fill animation
+      const activeFill = fills[nextIdx];
+      if (activeFill) {
+        activeFill.style.transform = "";
+        // force reflow so the animation restarts cleanly
+        void activeFill.offsetWidth;
+        activeFill.classList.add("blackjaw-fill-active");
+      }
+      current = nextIdx;
+      if (live) live.textContent = `Slide ${nextIdx + 1} of ${total}`;
+    };
+
+    const go = (nextIdx: number) => {
+      const wrapped = (nextIdx + total) % total;
+      render(wrapped);
+      schedule();
+    };
+
+    const schedule = () => {
+      if (timer) clearTimeout(timer);
+      if (reduced) return;
+      timer = setTimeout(() => go(current + 1), DURATION);
+    };
+
+    prev?.addEventListener("click", () => go(current - 1));
+    next?.addEventListener("click", () => go(current + 1));
+    dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+
+    // Pause on hover / focus / touch
+    const pause = () => {
+      if (timer) clearTimeout(timer);
+      timer = null;
+      root.classList.add("blackjaw-paused");
+    };
+    const resume = () => {
+      root.classList.remove("blackjaw-paused");
+      schedule();
+    };
+    root.addEventListener("pointerenter", pause);
+    root.addEventListener("pointerleave", resume);
+    root.addEventListener("focusin", pause);
+    root.addEventListener("focusout", resume);
+
+    // Keyboard
+    root.setAttribute("tabindex", "0");
+    root.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); go(current - 1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); go(current + 1); }
+    });
+
+    // Swipe (touch)
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    root.addEventListener("touchstart", (e) => {
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY; tracking = true;
+    }, { passive: true });
+    root.addEventListener("touchend", (e) => {
+      if (!tracking) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      tracking = false;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        go(current + (dx < 0 ? 1 : -1));
+      }
+    });
+
+    schedule();
   }
 </script>
