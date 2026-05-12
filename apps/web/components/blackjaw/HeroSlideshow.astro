@@ -11,14 +11,14 @@ const slides = [
       <img src={encodeURI(s.src)} alt={s.heading} class="w-full h-full object-cover object-[center_30%]" />
       <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/25 pointer-events-none"></div>
       <h1 class="sr-only">{s.heading}</h1>
-      <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-5 sm:px-6">
         <span
-          class="text-[18px] sm:text-[22px] lg:text-[26px] uppercase tracking-[0.34em] font-semibold"
+          class="text-[13px] sm:text-[20px] lg:text-[26px] uppercase tracking-[0.24em] sm:tracking-[0.3em] lg:tracking-[0.34em] font-semibold max-w-[22ch]"
           style="text-shadow:0 1px 8px rgba(0,0,0,.7);"
         >{s.eyebrow}</span>
         <a
           href={s.href}
-          class="mt-8 inline-flex items-center justify-center min-h-[56px] bg-bj-primary text-ink rounded-full px-14 py-4 text-[13px] sm:text-[14px] tracking-[0.24em] uppercase font-bold shadow-[0_10px_28px_rgba(0,0,0,.28)] hover:bg-bj-primary-active hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          class="mt-6 sm:mt-8 inline-flex items-center justify-center min-h-[48px] sm:min-h-[56px] bg-bj-primary text-ink rounded-full px-10 sm:px-14 py-3.5 sm:py-4 text-[12px] sm:text-[14px] tracking-[0.22em] sm:tracking-[0.24em] uppercase font-bold shadow-[0_10px_28px_rgba(0,0,0,.28)] hover:bg-bj-primary-active hover:-translate-y-0.5 transition-all duration-200 ease-out"
         >{s.cta}</a>
       </div>
     </div>
