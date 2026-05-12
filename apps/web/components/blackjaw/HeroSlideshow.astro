@@ -8,7 +8,7 @@ const slides = [
 <section class="relative w-full h-[100svh] min-h-[560px] overflow-hidden bg-black" data-blackjaw-hero>
   {slides.map((s, i) => (
     <div class={`blackjaw-slide absolute inset-0 transition-opacity duration-[900ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`} data-idx={i}>
-      <img src={encodeURI(s.src)} alt={s.heading} class="w-full h-full object-cover object-[center_30%]" />
+      <img src={encodeURI(s.src)} alt={s.heading} class="w-full h-full object-cover object-[center_25%] sm:object-[center_30%]" />
       <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/25 pointer-events-none"></div>
       <h1 class="sr-only">{s.heading}</h1>
       <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-5 sm:px-6">

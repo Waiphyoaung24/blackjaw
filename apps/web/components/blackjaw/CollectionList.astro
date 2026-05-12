@@ -6,10 +6,10 @@ const tiles = [
   { title: "SHIRTS", href: "#", image: "/blackjaw/collection-shirts.png" },
 ];
 ---
-<section class="px-4 lg:px-8 py-10 sm:py-12">
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+<section class="lg:px-8 py-10 sm:py-12">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-px sm:gap-4">
     {tiles.map((t) => (
-      <a href={t.href} class="group relative block aspect-[3/4] overflow-hidden">
+      <a href={t.href} class="group relative block aspect-[4/5] sm:aspect-[3/4] overflow-hidden">
         <img src={t.image} alt={t.title} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20"></div>
         <div class="absolute inset-x-0 top-5 sm:top-8 text-center px-3">
