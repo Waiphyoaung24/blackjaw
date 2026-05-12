@@ -364,9 +364,14 @@
     var SOUND_KEY = "bj-preload-sound";
 
     var soundBtn = loader.querySelector("[data-bj-sound]");
-    var soundEnabled = false;
+    // Default sound ON. Browser autoplay policy may still block playback
+    // on a fresh visit; if so, the toggle remains visible so the user can
+    // tap to play. Returning visitors who explicitly turned sound off get
+    // their preference respected via the "off" localStorage value.
+    var soundEnabled = true;
     try {
-      soundEnabled = localStorage.getItem(SOUND_KEY) === "on";
+      var stored = localStorage.getItem(SOUND_KEY);
+      if (stored === "off") soundEnabled = false;
     } catch (e) { /* storage blocked */ }
 
     var audio = new Audio(SOUND_URL);
@@ -407,7 +412,18 @@
       try {
         audio.currentTime = 0;
         var p = audio.play();
-        if (p && p.catch) p.catch(function () {});
+        if (p && p.catch) {
+          p.catch(function (err) {
+            // Browser blocked autoplay (typically first-time visitor with
+            // no engagement). Flip the toggle back to "tap for sound" so
+            // the visible button reflects that interaction is required.
+            // Don't persist — the user hasn't expressed a preference.
+            if (err && err.name === "NotAllowedError") {
+              soundEnabled = false;
+              paintSoundBtn();
+            }
+          });
+        }
       } catch (e) {}
     };
 
