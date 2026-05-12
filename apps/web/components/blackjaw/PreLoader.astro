@@ -204,11 +204,16 @@
   @keyframes bj-show { to { opacity: 1; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .bj-loader { transition-duration: 200ms; }
-    #bj-title-text, #bj-title-left, #bj-title-middle, #bj-title-right, #bj-crack {
+    .bj-loader { transition-duration: 300ms; }
+    #bj-title-text {
+      animation: bj-fade-in 400ms ease-out forwards;
+    }
+    #bj-title-left, #bj-title-middle, #bj-title-right, #bj-crack {
       animation: none;
     }
+    #bj-crack { opacity: 0; }
   }
+  @keyframes bj-fade-in { from { opacity: 0; } to { opacity: 1; } }
 </style>
 
 <script is:inline>
@@ -239,6 +244,6 @@
 
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     html.style.overflow = "hidden";
-    setTimeout(dismiss, reduced ? 600 : 3400);
+    setTimeout(dismiss, reduced ? 1800 : 3400);
   })();
 </script>
