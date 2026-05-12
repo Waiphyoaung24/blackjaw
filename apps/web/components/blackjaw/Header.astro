@@ -61,19 +61,25 @@ const nav = [
   const hero = document.querySelector<HTMLElement>("[data-blackjaw-hero]");
   if (header && hero) {
     const overlay = ["absolute", "top-0", "text-white"];
-    const pinned = ["fixed", "top-0", "bg-white", "text-ink", "shadow-[0_1px_0_rgba(0,0,0,0.06)]"];
+    const pinnedDesktop = ["fixed", "top-0", "bg-white", "text-ink", "shadow-[0_1px_0_rgba(0,0,0,0.06)]"];
+    const pinnedMobile = ["fixed", "top-0", "text-white", "bg-black/70", "backdrop-blur-md", "shadow-[0_1px_0_rgba(255,255,255,0.06)]"];
     const logoWhite = header.querySelector<HTMLElement>("[data-logo-white]");
     const logoDark = header.querySelector<HTMLElement>("[data-logo-dark]");
-    const onScroll = () => {
+    const desktopMq = window.matchMedia("(min-width: 1024px)");
+    const apply = () => {
       const past = window.scrollY > hero.offsetHeight - 80;
+      const isDesktop = desktopMq.matches;
+      const wantDark = past && isDesktop;
       overlay.forEach((c) => header.classList.toggle(c, !past));
-      pinned.forEach((c) => header.classList.toggle(c, past));
+      pinnedDesktop.forEach((c) => header.classList.toggle(c, past && isDesktop));
+      pinnedMobile.forEach((c) => header.classList.toggle(c, past && !isDesktop));
       if (logoWhite && logoDark) {
-        logoWhite.classList.toggle("hidden", past);
-        logoDark.classList.toggle("hidden", !past);
+        logoWhite.classList.toggle("hidden", wantDark);
+        logoDark.classList.toggle("hidden", !wantDark);
       }
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    apply();
+    window.addEventListener("scroll", apply, { passive: true });
+    desktopMq.addEventListener("change", apply);
   }
 </script>
