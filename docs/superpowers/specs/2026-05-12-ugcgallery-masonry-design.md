@@ -87,9 +87,9 @@ The component is copied from the React Bits spec with three deliberate changes.
    </span>
    ```
 
-3. **Brand tokens in CSS.** Upstream uses fixed `border-radius: 10px` and a custom drop shadow. We swap to project tokens from `DESIGN.md`:
-   - `.item-img` `border-radius` → `var(--radius-md)` (14 px, matches `rounded-xl` on sibling sections).
-   - `.item-img` `box-shadow` → `var(--shadow-card)` (one elevation tier per the design system).
+3. **Brand alignment in CSS.** Upstream uses fixed `border-radius: 10px` and a custom drop shadow. We align to project conventions:
+   - `.item-img` `border-radius` → `var(--radius-xl)` (~14 px in `apps/web/tailwind.config.css`, matches `rounded-xl` on sibling tiles).
+   - `.item-img` `box-shadow` → literal `0 8px 22px rgba(0,0,0,.10)`, matching the existing UGC CTA shadow (`UgcGallery.astro:22`). `DESIGN.md` calls for a single `--shadow-card` token, but it is not yet defined in `globals.css`; introducing it is out of scope for this change and would touch unrelated components.
    - `.item-wrapper` `padding: 6px` stays (acts as the gap, comparable to `gap-3` / `gap-4` on today's grid).
 
 All other logic — `useMedia` for columns, `useMeasure` for container width, `gsap.fromTo` on first paint, `gsap.to` on subsequent layout changes, `preloadImages` before animating — is identical to upstream.
