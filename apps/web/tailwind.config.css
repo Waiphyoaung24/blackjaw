@@ -8,6 +8,7 @@
 /* Content paths for Tailwind to scan */
 @source "./pages/**/*.{astro,js,ts,jsx,tsx}";
 @source "./layouts/**/*.{astro,js,ts,jsx,tsx}";
+@source "./components/**/*.{astro,js,ts,jsx,tsx}";
 @source "../../packages/ui/components/**/*.{ts,tsx}";
 @source "../../packages/ui/lib/**/*.{ts,tsx}";
 
