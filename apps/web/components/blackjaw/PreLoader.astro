@@ -2,6 +2,7 @@
 ---
 <div
   data-bj-loader
+  data-bj-ready="false"
   role="status"
   aria-label="Loading BLACKJAW"
   class="bj-loader"
@@ -10,7 +11,7 @@
     <defs>
       <image
         id="bj-title"
-        href="/brand/Black jaw White.png"
+        href="/brand/Black%20jaw%20White.png"
         width="460"
         height="24.9"
         preserveAspectRatio="xMidYMid meet"
@@ -165,6 +166,25 @@
   .bj-loader svg {
     width: min(92vw, 1000px);
     max-height: 90vh;
+    opacity: 0;
+    transition: opacity 220ms ease-out;
+  }
+  .bj-loader[data-bj-ready="true"] svg {
+    opacity: 1;
+  }
+  #bj-title-text,
+  #bj-title-left,
+  #bj-title-middle,
+  #bj-title-right,
+  #bj-crack {
+    animation-play-state: paused;
+  }
+  .bj-loader[data-bj-ready="true"] #bj-title-text,
+  .bj-loader[data-bj-ready="true"] #bj-title-left,
+  .bj-loader[data-bj-ready="true"] #bj-title-middle,
+  .bj-loader[data-bj-ready="true"] #bj-title-right,
+  .bj-loader[data-bj-ready="true"] #bj-crack {
+    animation-play-state: running;
   }
 
   #bj-title-text {
@@ -218,10 +238,10 @@
 
 <script is:inline>
   (function () {
-    var KEY = "bj_loader_shown";
     var loader = document.querySelector("[data-bj-loader]");
     if (!loader) return;
     var html = document.documentElement;
+    var MARK_SRC = "/brand/Black%20jaw%20White.png";
 
     var dismiss = function () {
       loader.setAttribute("data-bj-leaving", "true");
@@ -234,16 +254,26 @@
       setTimeout(done, 600);
     };
 
-    try {
-      if (sessionStorage.getItem(KEY)) {
-        loader.parentNode && loader.parentNode.removeChild(loader);
-        return;
-      }
-      sessionStorage.setItem(KEY, "1");
-    } catch (_) {}
-
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     html.style.overflow = "hidden";
-    setTimeout(dismiss, reduced ? 1800 : 3400);
+
+    var start = function () {
+      if (loader.getAttribute("data-bj-ready") === "true") return;
+      loader.setAttribute("data-bj-ready", "true");
+      setTimeout(dismiss, reduced ? 1800 : 3400);
+    };
+
+    var img = new Image();
+    var safety = setTimeout(start, 2000);
+    img.onload = img.onerror = function () {
+      clearTimeout(safety);
+      // Decode for a paint-ready frame where supported, then start.
+      if (img.decode) {
+        img.decode().then(start, start);
+      } else {
+        start();
+      }
+    };
+    img.src = MARK_SRC;
   })();
 </script>
