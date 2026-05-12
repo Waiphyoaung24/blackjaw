@@ -1,6 +1,6 @@
 ---
 const slides = [
-  { src: "/brand/blackjaw_runner.png", heading: "RESTOCK", eyebrow: "BITE THROUGH LIMITS", cta: "SHOP", href: "#featured" },
+  { src: "/brand/blackjaw_runner.png", mobileSrc: "/brand/photo_2026-05-12 16.55.19.jpeg", heading: "RESTOCK", eyebrow: "BITE THROUGH LIMITS", cta: "SHOP", href: "#featured" },
   { src: "/brand/photo_2026-05-12 16.55.14.jpeg", heading: "NEW DROP", eyebrow: "THE JAWS NEVER BREAK", cta: "SHOP", href: "#featured" },
   { src: "/brand/photo_2026-05-12 16.54.58.jpeg", heading: "RESTOCK", eyebrow: "BACK IN STOCK", cta: "SHOP", href: "#featured" },
 ];
@@ -8,7 +8,12 @@ const slides = [
 <section class="relative w-full h-[100svh] min-h-[560px] overflow-hidden bg-black" data-blackjaw-hero>
   {slides.map((s, i) => (
     <div class={`blackjaw-slide absolute inset-0 transition-opacity duration-[900ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`} data-idx={i}>
-      <img src={encodeURI(s.src)} alt={s.heading} class="w-full h-full object-cover object-[center_25%] sm:object-[center_30%]" />
+      <picture class="block w-full h-full">
+        {s.mobileSrc && (
+          <source media="(max-width: 639px)" srcset={encodeURI(s.mobileSrc)} />
+        )}
+        <img src={encodeURI(s.src)} alt={s.heading} class="w-full h-full object-cover object-[center_25%] sm:object-[center_30%]" />
+      </picture>
       <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/25 pointer-events-none"></div>
       <h1 class="sr-only">{s.heading}</h1>
       <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-5 sm:px-6">
