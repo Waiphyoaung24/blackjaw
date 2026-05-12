@@ -4,23 +4,90 @@ import '@/styles/globals.css';
 export interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  canonical?: string;
 }
 
+const SITE_URL = 'https://blackjaw.shop';
+const BRAND_NAME = 'BLACKJAW';
+const DEFAULT_TITLE = 'BLACKJAW — Bite Through Limits | Performance Fitness Apparel';
+const DEFAULT_DESCRIPTION =
+  'BLACKJAW builds performance lifestyle apparel for athletes who bite through limits. Signature shirts, shorts, joggers, and outerwear — engineered to never break.';
+const DEFAULT_IMAGE = '/brand/photo_2026-05-12 16.55.10.jpeg';
+const KEYWORDS =
+  'BLACKJAW, fitness apparel, performance wear, training shirts, gym shorts, joggers, athletic outerwear, lifestyle activewear, streetwear, mens fitness clothing';
+
 const {
-  title = 'BLACKJAW — Lifestyle Fitness Apparel',
-  description = 'BLACKJAW lifestyle fitness apparel. Shirts, shorts, joggers, and outerwear built for training and street.',
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  image = DEFAULT_IMAGE,
+  canonical,
 } = Astro.props;
+
+const pageUrl = canonical ?? new URL(Astro.url.pathname, SITE_URL).href;
+const ogImage = new URL(image, SITE_URL).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: BRAND_NAME,
+  url: SITE_URL,
+  logo: ogImage,
+  sameAs: [
+    'https://instagram.com/blackjaw',
+    'https://tiktok.com/@blackjaw',
+  ],
+  slogan: 'Bite Through Limits',
+};
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7bd02" />
+    <meta name="color-scheme" content="light" />
+
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/png" href="/blackjaw/favicon.png" />
+    <meta name="keywords" content={KEYWORDS} />
+    <meta name="author" content={BRAND_NAME} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/jpeg" href={DEFAULT_IMAGE} />
+    <link rel="apple-touch-icon" href={DEFAULT_IMAGE} />
+    <link rel="shortcut icon" href={DEFAULT_IMAGE} />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content={BRAND_NAME} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={`${BRAND_NAME} — Bite Through Limits`} />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="1126" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={`${BRAND_NAME} — Bite Through Limits`} />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-white">
     <slot />
