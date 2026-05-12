@@ -13,12 +13,13 @@ const slides = [
 >
   {slides.map((s, i) => (
     <div
-      class={`blackjaw-slide absolute inset-0 transition-opacity duration-[900ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      class={`blackjaw-slide absolute inset-0 ${i === 0 ? "" : "pointer-events-none"}`}
       data-idx={i}
       role="group"
       aria-roledescription="slide"
       aria-label={`${i + 1} of ${slides.length}`}
       aria-hidden={i === 0 ? "false" : "true"}
+      style={i === 0 ? "opacity:1;visibility:inherit" : "opacity:0;visibility:hidden"}
     >
       <picture class="block w-full h-full">
         {s.mobileSrc && (
@@ -74,8 +75,8 @@ const slides = [
         aria-selected={i === 0 ? "true" : "false"}
         class="group/dot relative h-3 flex items-center px-0.5 focus-visible:outline-none"
       >
-        <span class={`blackjaw-track block h-[3px] rounded-full overflow-hidden bg-white/30 transition-[width,background-color] duration-500 ease-out ${i === 0 ? "w-10 sm:w-12" : "w-5 sm:w-6"}`}>
-          <span class={`blackjaw-fill block h-full bg-white rounded-full origin-left will-change-transform ${i === 0 ? "blackjaw-fill-active" : "scale-x-0"}`}></span>
+        <span class={`blackjaw-track block h-[3px] rounded-full overflow-hidden bg-white/30 transition-[width] duration-500 ease-out ${i === 0 ? "w-10 sm:w-12" : "w-5 sm:w-6"}`}>
+          <span class="blackjaw-fill block h-full bg-white rounded-full will-change-transform"></span>
         </span>
       </button>
     ))}
@@ -84,112 +85,161 @@ const slides = [
   <span class="sr-only" aria-live="polite" data-blackjaw-live></span>
 </section>
 
-<style>
-  @keyframes blackjaw-progress {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
-  }
-  .blackjaw-fill-active {
-    animation: blackjaw-progress 5000ms linear forwards;
-  }
-  .blackjaw-paused .blackjaw-fill-active {
-    animation-play-state: paused;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .blackjaw-fill-active { animation: none; transform: scaleX(1); }
-  }
-</style>
-
 <script>
+  import gsap from "gsap";
+
   const root = document.querySelector<HTMLElement>("[data-blackjaw-hero]");
   if (root) {
-    const slides = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-slide"));
-    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-blackjaw-dot]"));
-    const fills = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-fill"));
-    const tracks = Array.from(root.querySelectorAll<HTMLElement>(".blackjaw-track"));
+    const slides = gsap.utils.toArray<HTMLElement>(".blackjaw-slide", root);
+    const images = slides.map((s) => s.querySelector<HTMLImageElement>("img")!);
+    const dots = gsap.utils.toArray<HTMLButtonElement>("[data-blackjaw-dot]", root);
+    const fills = gsap.utils.toArray<HTMLElement>(".blackjaw-fill", root);
+    const tracks = gsap.utils.toArray<HTMLElement>(".blackjaw-track", root);
     const prev = root.querySelector<HTMLButtonElement>("[data-blackjaw-prev]");
     const next = root.querySelector<HTMLButtonElement>("[data-blackjaw-next]");
     const live = root.querySelector<HTMLElement>("[data-blackjaw-live]");
     const total = slides.length;
-    const DURATION = 5000;
-    let current = 0;
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
+    const DURATION = 5;
     const wActive = ["w-10", "sm:w-12"];
     const wIdle = ["w-5", "sm:w-6"];
 
-    const render = (nextIdx: number) => {
-      slides.forEach((el, i) => {
-        const active = i === nextIdx;
-        el.style.opacity = active ? "1" : "0";
-        el.classList.toggle("pointer-events-none", !active);
-        el.setAttribute("aria-hidden", active ? "false" : "true");
-      });
-      dots.forEach((d, i) => d.setAttribute("aria-selected", i === nextIdx ? "true" : "false"));
+    let current = 0;
+    let isAnimating = false;
+    let progressTween: gsap.core.Tween | null = null;
+    let kenBurns: gsap.core.Tween | null = null;
+    let autoplayId: ReturnType<typeof setTimeout> | null = null;
+
+    // Initial state — only slide 0 visible
+    gsap.set(slides, { autoAlpha: 0 });
+    gsap.set(slides[0], { autoAlpha: 1 });
+    gsap.set(images, { scale: 1 });
+    gsap.set(fills, { scaleX: 0, transformOrigin: "left center" });
+
+    const mm = gsap.matchMedia();
+    let reduced = false;
+    mm.add(
+      { motion: "(prefers-reduced-motion: no-preference)", reduced: "(prefers-reduced-motion: reduce)" },
+      (ctx) => {
+        reduced = !!ctx.conditions?.reduced;
+      }
+    );
+
+    const setDotState = (idx: number) => {
+      dots.forEach((d, i) => d.setAttribute("aria-selected", i === idx ? "true" : "false"));
       tracks.forEach((t, i) => {
-        const active = i === nextIdx;
+        const active = i === idx;
         wActive.forEach((c) => t.classList.toggle(c, active));
         wIdle.forEach((c) => t.classList.toggle(c, !active));
       });
-      fills.forEach((f, i) => {
-        f.classList.remove("blackjaw-fill-active");
-        f.style.transform = i < nextIdx ? "scaleX(1)" : i > nextIdx ? "scaleX(0)" : "";
-      });
-      // restart the active fill animation
-      const activeFill = fills[nextIdx];
-      if (activeFill) {
-        activeFill.style.transform = "";
-        // force reflow so the animation restarts cleanly
-        void activeFill.offsetWidth;
-        activeFill.classList.add("blackjaw-fill-active");
-      }
-      current = nextIdx;
-      if (live) live.textContent = `Slide ${nextIdx + 1} of ${total}`;
     };
 
-    const go = (nextIdx: number) => {
-      const wrapped = (nextIdx + total) % total;
-      render(wrapped);
-      schedule();
+    const runKenBurns = (idx: number) => {
+      kenBurns?.kill();
+      if (reduced) return;
+      gsap.set(images[idx], { scale: 1 });
+      kenBurns = gsap.to(images[idx], {
+        scale: 1.08,
+        duration: DURATION + 1.4,
+        ease: "none",
+      });
+    };
+
+    const runProgress = (idx: number, onComplete: () => void) => {
+      progressTween?.kill();
+      gsap.set(fills, { scaleX: (i) => (i < idx ? 1 : 0) });
+      if (reduced) {
+        gsap.set(fills[idx], { scaleX: 1 });
+        return;
+      }
+      progressTween = gsap.fromTo(
+        fills[idx],
+        { scaleX: 0 },
+        { scaleX: 1, duration: DURATION, ease: "none", onComplete },
+      );
+    };
+
+    const goTo = (rawIdx: number, dir: 1 | -1 = 1) => {
+      const idx = ((rawIdx % total) + total) % total;
+      if (idx === current || isAnimating) return;
+      isAnimating = true;
+
+      const fromSlide = slides[current];
+      const toSlide = slides[idx];
+
+      slides.forEach((s, i) => s.setAttribute("aria-hidden", i === idx ? "false" : "true"));
+      setDotState(idx);
+      if (live) live.textContent = `Slide ${idx + 1} of ${total}`;
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power2.inOut" },
+        onComplete: () => {
+          fromSlide.classList.add("pointer-events-none");
+          toSlide.classList.remove("pointer-events-none");
+          current = idx;
+          isAnimating = false;
+          runKenBurns(idx);
+          schedule();
+        },
+      });
+
+      // Cross-fade with a soft directional drift on the image
+      tl.set(toSlide, { autoAlpha: 0, zIndex: 2 })
+        .set(fromSlide, { zIndex: 1 })
+        .fromTo(
+          images[idx],
+          { xPercent: 4 * dir, scale: 1.04 },
+          { xPercent: 0, scale: 1, duration: 1.1, ease: "power3.out" },
+          0,
+        )
+        .to(toSlide, { autoAlpha: 1, duration: 0.9 }, 0)
+        .to(fromSlide, { autoAlpha: 0, duration: 0.9 }, 0)
+        .to(
+          images[current],
+          { scale: 1.06, duration: 1.1, ease: "power2.out" },
+          0,
+        );
+
+      runProgress(idx, () => goTo(idx + 1, 1));
     };
 
     const schedule = () => {
-      if (timer) clearTimeout(timer);
-      if (reduced) return;
-      timer = setTimeout(() => go(current + 1), DURATION);
+      if (autoplayId) clearTimeout(autoplayId);
+      // progress tween drives the next advance; this is just a safety net
     };
 
-    prev?.addEventListener("click", () => go(current - 1));
-    next?.addEventListener("click", () => go(current + 1));
-    dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
-
-    // Pause on hover / focus / touch
     const pause = () => {
-      if (timer) clearTimeout(timer);
-      timer = null;
-      root.classList.add("blackjaw-paused");
+      progressTween?.pause();
+      kenBurns?.pause();
     };
     const resume = () => {
-      root.classList.remove("blackjaw-paused");
-      schedule();
+      progressTween?.resume();
+      kenBurns?.resume();
     };
+
+    // Kick off slide 0
+    setDotState(0);
+    runKenBurns(0);
+    runProgress(0, () => goTo(1, 1));
+
+    prev?.addEventListener("click", () => goTo(current - 1, -1));
+    next?.addEventListener("click", () => goTo(current + 1, 1));
+    dots.forEach((d, i) =>
+      d.addEventListener("click", () => goTo(i, i > current ? 1 : -1)),
+    );
+
     root.addEventListener("pointerenter", pause);
     root.addEventListener("pointerleave", resume);
     root.addEventListener("focusin", pause);
     root.addEventListener("focusout", resume);
 
-    // Keyboard
     root.setAttribute("tabindex", "0");
     root.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") { e.preventDefault(); go(current - 1); }
-      if (e.key === "ArrowRight") { e.preventDefault(); go(current + 1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); goTo(current - 1, -1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); goTo(current + 1, 1); }
     });
 
-    // Swipe (touch)
-    let startX = 0;
-    let startY = 0;
-    let tracking = false;
+    // Swipe
+    let startX = 0, startY = 0, tracking = false;
     root.addEventListener("touchstart", (e) => {
       const t = e.touches[0];
       startX = t.clientX; startY = t.clientY; tracking = true;
@@ -201,10 +251,9 @@ const slides = [
       const dy = t.clientY - startY;
       tracking = false;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-        go(current + (dx < 0 ? 1 : -1));
+        const dir: 1 | -1 = dx < 0 ? 1 : -1;
+        goTo(current + dir, dir);
       }
     });
-
-    schedule();
   }
 </script>
