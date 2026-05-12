@@ -7,6 +7,17 @@
   aria-label="Loading BLACKJAW"
   class="bj-loader"
 >
+  <button
+    data-bj-sound
+    type="button"
+    aria-label="Enable reveal sound"
+    aria-pressed="false"
+    class="bj-sound-toggle"
+    data-tooltip="Tap for sound"
+  >
+    <span class="bj-sound-pulse" aria-hidden="true"></span>
+    <span class="bj-sound-icon" aria-hidden="true"></span>
+  </button>
   <svg viewBox="0 0 800 800" aria-hidden="true">
     <defs>
       <image
@@ -234,6 +245,113 @@
     #bj-crack { opacity: 0; }
   }
   @keyframes bj-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .bj-sound-toggle {
+    position: absolute;
+    top: clamp(16px, 4vw, 28px);
+    right: clamp(16px, 4vw, 28px);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 320ms ease-out 200ms,
+                transform 240ms cubic-bezier(.2,.7,.2,1) 200ms,
+                color 180ms ease-out,
+                border-color 180ms ease-out,
+                box-shadow 220ms ease-out,
+                background-color 180ms ease-out;
+  }
+  .bj-loader[data-bj-ready="true"] .bj-sound-toggle {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .bj-sound-toggle:hover,
+  .bj-sound-toggle:focus-visible {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.04);
+    outline: none;
+  }
+  .bj-sound-toggle:active {
+    transform: scale(0.94);
+  }
+  .bj-sound-toggle[aria-pressed="true"] {
+    color: #fff;
+    border-color: #f7bd02;
+    box-shadow: 0 0 0 4px rgba(247, 189, 2, 0.12);
+  }
+  .bj-sound-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+    background-color: currentColor;
+    -webkit-mask: url('/brand/sound-icon.png') center / contain no-repeat;
+    mask: url('/brand/sound-icon.png') center / contain no-repeat;
+    transition: background-color 180ms ease-out;
+  }
+
+  .bj-sound-pulse {
+    position: absolute;
+    inset: -1px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+    opacity: 0;
+    animation: bj-sound-pulse 2.4s cubic-bezier(.2,.7,.2,1) infinite;
+    animation-play-state: paused;
+  }
+  .bj-loader[data-bj-ready="true"] .bj-sound-toggle:not([aria-pressed="true"]) .bj-sound-pulse {
+    animation-play-state: running;
+  }
+  @keyframes bj-sound-pulse {
+    0%   { transform: scale(1);   opacity: 0.55; }
+    70%  { transform: scale(1.55); opacity: 0; }
+    100% { transform: scale(1.55); opacity: 0; }
+  }
+
+  .bj-sound-toggle::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    font-family: var(--font-display, system-ui), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 220ms ease-out, transform 220ms ease-out;
+    pointer-events: none;
+  }
+  .bj-sound-toggle:hover::after,
+  .bj-sound-toggle:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .bj-sound-toggle[aria-pressed="true"]::after {
+    color: rgba(247, 189, 2, 0.9);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bj-sound-toggle { transition: opacity 200ms ease-out, color 0ms, border-color 0ms; transform: none !important; }
+    .bj-sound-pulse, .bj-loader[data-bj-ready="true"] .bj-sound-toggle:not([aria-pressed="true"]) .bj-sound-pulse {
+      animation: none;
+      opacity: 0;
+    }
+    .bj-sound-toggle::after { transition: opacity 120ms ease-out; transform: none !important; }
+  }
 </style>
 
 <script is:inline>
@@ -242,6 +360,56 @@
     if (!loader) return;
     var html = document.documentElement;
     var MARK_SRC = "/brand/Black%20jaw%20White.png";
+    var SOUND_URL = "https://manzdev.github.io/cursos-assets/css3/audio/eh_usual_open.mp3";
+    var SOUND_KEY = "bj-preload-sound";
+
+    var soundBtn = loader.querySelector("[data-bj-sound]");
+    var soundEnabled = false;
+    try {
+      soundEnabled = localStorage.getItem(SOUND_KEY) === "on";
+    } catch (e) { /* storage blocked */ }
+
+    var audio = new Audio(SOUND_URL);
+    audio.preload = "auto";
+    audio.volume = 0.6;
+
+    var paintSoundBtn = function () {
+      if (!soundBtn) return;
+      soundBtn.setAttribute("aria-pressed", soundEnabled ? "true" : "false");
+      soundBtn.setAttribute("aria-label", soundEnabled ? "Disable reveal sound" : "Enable reveal sound");
+      soundBtn.setAttribute("data-tooltip", soundEnabled ? "Sound on" : "Tap for sound");
+    };
+    paintSoundBtn();
+
+    if (soundBtn) {
+      soundBtn.addEventListener("click", function () {
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem(SOUND_KEY, soundEnabled ? "on" : "off"); } catch (e) {}
+        paintSoundBtn();
+
+        if (soundEnabled) {
+          // The click is the user gesture, so playback is permitted now.
+          // Reset to start so the reveal sound stays in sync with the crack
+          // animation already on screen.
+          try {
+            audio.currentTime = 0;
+            var p = audio.play();
+            if (p && p.catch) p.catch(function () {});
+          } catch (e) {}
+        } else {
+          try { audio.pause(); } catch (e) {}
+        }
+      });
+    }
+
+    var playReveal = function () {
+      if (!soundEnabled) return;
+      try {
+        audio.currentTime = 0;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () {});
+      } catch (e) {}
+    };
 
     var dismiss = function () {
       loader.setAttribute("data-bj-leaving", "true");
@@ -260,6 +428,8 @@
     var start = function () {
       if (loader.getAttribute("data-bj-ready") === "true") return;
       loader.setAttribute("data-bj-ready", "true");
+      // Kawoosh fires the moment the loader animation kicks in.
+      playReveal();
       setTimeout(dismiss, reduced ? 1800 : 3400);
     };
 
