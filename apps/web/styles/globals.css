@@ -103,4 +103,8 @@
   --font-display:
     Montserrat, "GT Standard M", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #282828;
+  --color-bj-primary: #f7bd02;
+  --color-bj-primary-active: #d9a300;
+  --color-bj-primary-disabled: #fde79a;
 }
