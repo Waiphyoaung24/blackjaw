@@ -78,13 +78,13 @@ const tiles: Tile[] = [
     </div>
 
     <div
-      class="grid grid-cols-4 grid-rows-[repeat(3,clamp(110px,19vw,280px))] gap-1.5 sm:gap-3"
+      class="grid grid-cols-2 sm:grid-cols-4 sm:grid-rows-[repeat(3,clamp(110px,19vw,280px))] gap-2 sm:gap-3"
     >
       {
         tiles.map((t) => (
           <a
             href="#"
-            class={`group relative block h-full w-full overflow-hidden rounded-[2px] bg-neutral-900 ${t.className}`}
+            class={`group relative block h-full w-full overflow-hidden rounded-[2px] bg-neutral-900 aspect-[4/5] sm:aspect-auto ${t.className}`}
           >
             <img
               src={t.src}
