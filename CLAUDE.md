@@ -101,7 +101,15 @@ Whenever the task involves **UI design, visual styling, layout, components, them
 - `clone-website` / `redesign-skill` / `taste-skill` / `design-md` — research & taste passes
 - `brand-guidelines-anthropic` / `brand-guidelines-community` — brand reference
 
-Invoke the relevant skill before generating design code, then apply its guidance to this project.
+**Stack the skills, don't pick one.** For any non-trivial design task (new
+component, layout, hero section, redesign, animation), invoke **all relevant
+skills together** — taste/research + UX + visual system + implementation +
+motion (if applicable) + accessibility + performance + `karpathy-guidelines`.
+The goal is compound creative output from layered guidance, not single-skill
+execution. Brand rules in `DESIGN.md` apply on top as the final filter.
+
+Trivial single-line tweaks (color swap, typo, padding nudge) don't need the
+full stack — use judgment.
 
 ## Design Context
 

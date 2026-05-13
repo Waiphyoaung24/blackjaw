@@ -20,3 +20,6 @@
 # Misc
 /.husky
 *.hbs
+
+# Vendored third-party Claude skills (preserve upstream formatting)
+/.claude/skills/
