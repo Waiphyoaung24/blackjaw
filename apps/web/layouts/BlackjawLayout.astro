@@ -85,11 +85,13 @@ const jsonLd = {
     <!-- JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts — self-hosted (see @font-face in styles/globals.css) -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/font/Libre_Franklin/LibreFranklin-VariableFont_wght.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
     />
   </head>
   <body class="bg-white">
