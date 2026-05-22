@@ -247,6 +247,7 @@ const items = Array.from(
         onRelease: syncIndex,
         onThrowComplete: () => gsap.set(proxy, { x: 0 }) && syncIndex(),
       })[0];
+      tl.draggable = draggable;
     }
     return tl;
   }
@@ -261,27 +262,58 @@ const items = Array.from(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    const loop = horizontalLoop(marqueeItems, {
-      repeat: -1,
-      speed: 1.5,
-      draggable: !reduceMotion,
-      paddingRight: parseFloat(
-        gsap.getProperty(marqueeItems[0], "marginRight", "px") as string,
-      ),
-    });
+    let loop: any = null;
 
-    if (reduceMotion) {
-      // Honour reduced-motion: lay the ticker out but never auto-scroll.
-      loop.pause();
+    // (Re)build the seamless loop, measuring item widths at the current size.
+    const buildLoop = () => {
+      loop?.draggable?.kill();
+      loop?.kill();
+      gsap.set(marqueeItems, { clearProps: "transform" });
+
+      loop = horizontalLoop(marqueeItems, {
+        repeat: -1,
+        speed: 1.5,
+        draggable: !reduceMotion,
+        paddingRight: parseFloat(
+          gsap.getProperty(marqueeItems[0], "marginRight", "px") as string,
+        ),
+      });
+      if (reduceMotion) loop.pause();
+    };
+
+    // Build once the brand font has loaded — measuring before the webfont
+    // swaps in bakes in the wrong widths and breaks the seamless loop.
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(buildLoop);
     } else {
-      // Pause on hover, always resume moving left — direction never flips.
+      buildLoop();
+    }
+
+    // Re-measure on a real width change (orientation flip / desktop resize).
+    // Mobile browsers fire `resize` on scroll as the URL bar collapses — those
+    // are height-only, so they're ignored.
+    let lastWidth = window.innerWidth;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    window.addEventListener(
+      "resize",
+      () => {
+        if (window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildLoop, 200);
+      },
+      { passive: true },
+    );
+
+    // Pause on hover, always resume moving left — direction never flips.
+    if (!reduceMotion) {
       marqueeItems.forEach((item) => {
-        item.addEventListener("mouseenter", () =>
-          gsap.to(loop, { timeScale: 0, overwrite: true }),
-        );
-        item.addEventListener("mouseleave", () =>
-          gsap.to(loop, { timeScale: 1, overwrite: true }),
-        );
+        item.addEventListener("mouseenter", () => {
+          if (loop) gsap.to(loop, { timeScale: 0, overwrite: true });
+        });
+        item.addEventListener("mouseleave", () => {
+          if (loop) gsap.to(loop, { timeScale: 1, overwrite: true });
+        });
       });
     }
   }
