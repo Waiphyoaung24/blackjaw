@@ -1,0 +1,95 @@
+---
+/**
+ * Centered brand-statement section — a quiet breather between the product
+ * collections and the black UGC gallery. Composition follows the supplied
+ * reference (bracketed eyebrow, large centered statement, outlined pill CTA);
+ * typography stays on the Blackjaw display font since the brand anti-references
+ * heavy serif at this scale.
+ */
+const aboutHref = "/about";
+---
+
+<section id="about" class="bg-white py-20 sm:py-28 lg:py-32" data-reveal>
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-[860px] flex flex-col items-center text-center">
+      <span
+        data-reveal-item
+        class="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold text-ink/45 mb-7 sm:mb-9"
+      >
+        <span aria-hidden="true" class="text-ink/30">[</span>
+        About Blackjaw
+        <span aria-hidden="true" class="text-ink/30">]</span>
+      </span>
+
+      <h2
+        data-reveal-item
+        class="font-[family-name:var(--font-primary)] font-semibold text-ink text-balance text-[26px] sm:text-[36px] lg:text-[46px] leading-[1.3] tracking-[-0.015em]"
+      >
+        We build for athletes who bite through limits, creators who shape
+        culture, and everyone chasing one more rep. Every Blackjaw piece is
+        engineered to outlast the grind.
+      </h2>
+
+      <a
+        data-reveal-item
+        href={aboutHref}
+        class="mt-9 sm:mt-11 inline-flex items-center justify-center min-h-[48px] rounded-full border border-ink/25 px-9 py-3 text-[12px] tracking-[0.2em] uppercase font-bold font-[family-name:var(--font-button)] text-ink hover:bg-ink hover:border-ink hover:text-white transition-colors duration-200 ease-out"
+      >
+        Learn More
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  [data-reveal] [data-reveal-item] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  [data-reveal].is-revealed [data-reveal-item] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s ease-out;
+  }
+  [data-reveal].is-revealed [data-reveal-item]:nth-child(2) {
+    transition-delay: 0.1s;
+  }
+  [data-reveal].is-revealed [data-reveal-item]:nth-child(3) {
+    transition-delay: 0.2s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] [data-reveal-item] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Reveal the statement once it scrolls into view. Falls back to the
+  // fully-visible state when reduced motion is requested or IO is missing.
+  const sections = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    sections.forEach((el) => el.classList.add("is-revealed"));
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.25 },
+    );
+    sections.forEach((el) => observer.observe(el));
+  }
+</script>

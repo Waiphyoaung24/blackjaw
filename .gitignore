@@ -67,6 +67,9 @@ srcpack.config.ts
 *.local.jsonc
 *.local.ts
 
+# Playwright MCP scratch output (console logs, page snapshots)
+.playwright-mcp/
+
 # macOS
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
 .DS_Store

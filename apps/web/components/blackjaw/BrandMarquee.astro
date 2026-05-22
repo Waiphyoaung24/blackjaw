@@ -1,0 +1,288 @@
+---
+/**
+ * Infinite brand marquee — a seamless phrase + mark ticker that bridges
+ * the product collections and the About statement.
+ *
+ * Built on GreenSock's `horizontalLoop` helper
+ * (based off https://codepen.io/GreenSock/pen/jOBBVjr): the loop runs forever
+ * leftward, pauses on hover, and is drag-scrubbable.
+ */
+const phrases = [
+  "Stay Disciplined",
+  "Stay Consistent",
+  "Stay Hard",
+  "Keep training with BLACK JAW",
+];
+const REPEAT = 12;
+const items = Array.from(
+  { length: REPEAT },
+  (_, i) => phrases[i % phrases.length],
+);
+---
+
+<section class="bj-marquee-section bg-ink overflow-hidden" aria-label="Blackjaw">
+  <div class="bj-marquee" aria-hidden="true">
+    <div class="bj-marquee-track">
+      {
+        items.map((phrase) => (
+          <span class="bj-marquee-item">
+            <span class="bj-marquee-phrase">{phrase}</span>
+            <img
+              src="/brand/blackjaw-mark.png"
+              alt=""
+              class="bj-marquee-mark"
+              width="64"
+              height="64"
+              draggable="false"
+            />
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .bj-marquee-section {
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+  }
+  .bj-marquee {
+    display: flex;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  .bj-marquee-track {
+    position: relative;
+    white-space: nowrap;
+    will-change: transform;
+  }
+  .bj-marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.75rem);
+    margin-right: clamp(1.25rem, 3vw, 2.75rem);
+    cursor: grab;
+  }
+  .bj-marquee-item:active {
+    cursor: grabbing;
+  }
+  .bj-marquee-phrase {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    font-size: clamp(1.5rem, 4vw, 3.25rem);
+    color: #ffffff;
+    white-space: nowrap;
+  }
+  .bj-marquee-mark {
+    display: block;
+    height: clamp(1.75rem, 4.6vw, 3.75rem);
+    width: auto;
+    /* The brand mark ships dark — invert it to read on the ink band. */
+    filter: invert(1);
+    user-select: none;
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+  import { Draggable } from "gsap/Draggable";
+  import { InertiaPlugin } from "gsap/InertiaPlugin";
+
+  gsap.registerPlugin(Draggable, InertiaPlugin);
+
+  /* ----------------------------------------------------------------------
+   * horizontalLoop — vendored GreenSock helper. Animates a group of elements
+   * along the x-axis in a seamless, responsive loop.
+   * Source: https://gsap.com/docs/v3/HelperFunctions/helpers/seamlessLoop
+   * -------------------------------------------------------------------- */
+  function horizontalLoop(items: any, config: any) {
+    items = gsap.utils.toArray(items);
+    config = config || {};
+    let tl: any = gsap.timeline({
+        repeat: config.repeat,
+        paused: config.paused,
+        defaults: { ease: "none" },
+        onReverseComplete: () =>
+          tl.totalTime(tl.rawTime() + tl.duration() * 100),
+      }),
+      length = items.length,
+      startX = items[0].offsetLeft,
+      times: number[] = [],
+      widths: number[] = [],
+      xPercents: number[] = [],
+      curIndex = 0,
+      pixelsPerSecond = (config.speed || 1) * 100,
+      snap =
+        config.snap === false
+          ? (v: any) => v
+          : gsap.utils.snap(config.snap || 1),
+      populateWidths = () =>
+        items.forEach((el: any, i: number) => {
+          widths[i] = parseFloat(gsap.getProperty(el, "width", "px") as string);
+          xPercents[i] = snap(
+            (parseFloat(gsap.getProperty(el, "x", "px") as string) /
+              widths[i]) *
+              100 +
+              (gsap.getProperty(el, "xPercent") as number),
+          );
+        }),
+      getTotalWidth = () =>
+        items[length - 1].offsetLeft +
+        (xPercents[length - 1] / 100) * widths[length - 1] -
+        startX +
+        items[length - 1].offsetWidth *
+          (gsap.getProperty(items[length - 1], "scaleX") as number) +
+        (parseFloat(config.paddingRight) || 0),
+      totalWidth: number,
+      curX: number,
+      distanceToStart: number,
+      distanceToLoop: number,
+      item: any,
+      i: number;
+    populateWidths();
+    gsap.set(items, {
+      xPercent: (i: number) => xPercents[i],
+    });
+    gsap.set(items, { x: 0 });
+    totalWidth = getTotalWidth();
+    for (i = 0; i < length; i++) {
+      item = items[i];
+      curX = (xPercents[i] / 100) * widths[i];
+      distanceToStart = item.offsetLeft + curX - startX;
+      distanceToLoop =
+        distanceToStart +
+        widths[i] * (gsap.getProperty(item, "scaleX") as number);
+      tl.to(
+        item,
+        {
+          xPercent: snap(((curX - distanceToLoop) / widths[i]) * 100),
+          duration: distanceToLoop / pixelsPerSecond,
+        },
+        0,
+      )
+        .fromTo(
+          item,
+          {
+            xPercent: snap(
+              ((curX - distanceToLoop + totalWidth) / widths[i]) * 100,
+            ),
+          },
+          {
+            xPercent: xPercents[i],
+            duration:
+              (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
+            immediateRender: false,
+          },
+          distanceToLoop / pixelsPerSecond,
+        )
+        .add("label" + i, distanceToStart / pixelsPerSecond);
+      times[i] = distanceToStart / pixelsPerSecond;
+    }
+    function toIndex(index: number, vars: any) {
+      vars = vars || {};
+      Math.abs(index - curIndex) > length / 2 &&
+        (index += index > curIndex ? -length : length);
+      let newIndex = gsap.utils.wrap(0, length, index),
+        time = times[newIndex];
+      if (time > tl.time() !== index > curIndex) {
+        vars.modifiers = { time: gsap.utils.wrap(0, tl.duration()) };
+        time += tl.duration() * (index > curIndex ? 1 : -1);
+      }
+      curIndex = newIndex;
+      vars.overwrite = true;
+      return tl.tweenTo(time, vars);
+    }
+    tl.next = (vars: any) => toIndex(curIndex + 1, vars);
+    tl.previous = (vars: any) => toIndex(curIndex - 1, vars);
+    tl.current = () => curIndex;
+    tl.toIndex = (index: number, vars: any) => toIndex(index, vars);
+    tl.updateIndex = () =>
+      (curIndex = Math.round(tl.progress() * (items.length - 1)));
+    tl.times = times;
+    tl.progress(1, true).progress(0, true); // pre-render for performance
+    if (config.reversed) {
+      tl.vars.onReverseComplete();
+      tl.reverse();
+    }
+    if (config.draggable && typeof Draggable === "function") {
+      let proxy = document.createElement("div"),
+        wrap = gsap.utils.wrap(0, 1),
+        ratio: number,
+        startProgress: number,
+        draggable: any,
+        dragSnap: number,
+        roundFactor: number,
+        align = () =>
+          tl.progress(
+            wrap(startProgress + (draggable.startX - draggable.x) * ratio),
+          ),
+        syncIndex = () => tl.updateIndex();
+      draggable = Draggable.create(proxy, {
+        trigger: items[0].parentNode,
+        type: "x",
+        onPress() {
+          startProgress = tl.progress();
+          tl.progress(0);
+          populateWidths();
+          totalWidth = getTotalWidth();
+          ratio = 1 / totalWidth;
+          dragSnap = totalWidth / items.length;
+          roundFactor = Math.pow(
+            10,
+            ((dragSnap + "").split(".")[1] || "").length,
+          );
+          tl.progress(startProgress);
+        },
+        onDrag: align,
+        onThrowUpdate: align,
+        inertia: true,
+        snap: (value: any) => {
+          let n =
+            Math.round(parseFloat(value) / dragSnap) * dragSnap * roundFactor;
+          return (n - (n % 1)) / roundFactor;
+        },
+        onRelease: syncIndex,
+        onThrowComplete: () => gsap.set(proxy, { x: 0 }) && syncIndex(),
+      })[0];
+    }
+    return tl;
+  }
+
+  const track = document.querySelector<HTMLElement>(".bj-marquee-track");
+  if (track) {
+    const marqueeItems = gsap.utils.toArray<HTMLElement>(
+      ".bj-marquee-item",
+      track,
+    );
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const loop = horizontalLoop(marqueeItems, {
+      repeat: -1,
+      speed: 1.5,
+      draggable: !reduceMotion,
+      paddingRight: parseFloat(
+        gsap.getProperty(marqueeItems[0], "marginRight", "px") as string,
+      ),
+    });
+
+    if (reduceMotion) {
+      // Honour reduced-motion: lay the ticker out but never auto-scroll.
+      loop.pause();
+    } else {
+      // Pause on hover, always resume moving left — direction never flips.
+      marqueeItems.forEach((item) => {
+        item.addEventListener("mouseenter", () =>
+          gsap.to(loop, { timeScale: 0, overwrite: true }),
+        );
+        item.addEventListener("mouseleave", () =>
+          gsap.to(loop, { timeScale: 1, overwrite: true }),
+        );
+      });
+    }
+  }
+</script>

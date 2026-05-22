@@ -36,11 +36,38 @@ const slides = [
         >{s.eyebrow}</span>
         <a
           href={s.href}
-          class="mt-6 sm:mt-8 inline-flex items-center justify-center min-h-[48px] sm:min-h-[56px] bg-bj-primary text-ink rounded-full px-10 sm:px-14 py-3.5 sm:py-4 text-[14px] sm:text-[14px] tracking-[0.22em] sm:tracking-[0.24em] uppercase font-bold shadow-[0_10px_28px_rgba(0,0,0,.28)] hover:bg-bj-primary-active hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          class="mt-6 sm:mt-8 inline-flex items-center justify-center min-h-[48px] sm:min-h-[56px] bg-bj-primary text-ink rounded-full px-10 sm:px-14 py-3.5 sm:py-4 text-[14px] sm:text-[14px] tracking-[0.22em] sm:tracking-[0.24em] uppercase font-bold font-[family-name:var(--font-button)] shadow-[0_10px_28px_rgba(0,0,0,.28)] hover:bg-bj-primary-active hover:-translate-y-0.5 transition-all duration-200 ease-out"
         >{s.cta}</a>
       </div>
     </div>
   ))}
+
+  {/* Brand manifesto — desktop-only statement anchored to the bottom-left of the
+      hero. Hidden below lg; the centered eyebrow + CTA sit clear above it. */}
+  <div
+    class="hidden lg:block absolute inset-x-0 bottom-0 h-[58%] z-[5] pointer-events-none bg-gradient-to-t from-black/65 via-black/25 to-transparent"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="hidden lg:flex absolute bottom-0 left-0 max-w-[36rem] pl-24 xl:pl-32 pr-6 pb-16 xl:pb-20 z-10 flex-col pointer-events-none"
+    data-blackjaw-slogan
+  >
+    <span class="blackjaw-slogan-line block h-[3px] w-10 rounded-full bg-bj-primary"></span>
+    <p class="blackjaw-slogan-line mt-6 font-[family-name:var(--font-primary)] text-white">
+      <span
+        class="block text-[24px] xl:text-[30px] font-medium leading-[1.2] tracking-[-0.01em]"
+        style="text-shadow:0 2px 18px rgba(0,0,0,.6);"
+      >The real battle is not against others.</span>
+      <span
+        class="mt-1.5 block text-[28px] xl:text-[36px] font-semibold leading-[1.12] tracking-[-0.015em]"
+        style="text-shadow:0 2px 18px rgba(0,0,0,.65);"
+      >It’s always you vs you.</span>
+    </p>
+    <p
+      class="blackjaw-slogan-line mt-5 max-w-[30rem] font-[family-name:var(--font-primary)] text-[14px] xl:text-[15px] font-normal leading-[1.65] text-white/85"
+      style="text-shadow:0 1px 12px rgba(0,0,0,.7);"
+    >Black Jaw stands on your side — not to comfort, to push. To make sure you show up, and follow through.</p>
+  </div>
 
   <button
     type="button"
@@ -84,6 +111,33 @@ const slides = [
 
   <span class="sr-only" aria-live="polite" data-blackjaw-live></span>
 </section>
+
+<style>
+  /* Staggered fade-up reveal for the left-anchored manifesto. */
+  [data-blackjaw-slogan] .blackjaw-slogan-line {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: blackjaw-slogan-reveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  [data-blackjaw-slogan] .blackjaw-slogan-line:nth-child(1) { animation-delay: 0.2s; }
+  [data-blackjaw-slogan] .blackjaw-slogan-line:nth-child(2) { animation-delay: 0.32s; }
+  [data-blackjaw-slogan] .blackjaw-slogan-line:nth-child(3) { animation-delay: 0.44s; }
+
+  @keyframes blackjaw-slogan-reveal {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-blackjaw-slogan] .blackjaw-slogan-line {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
 
 <script>
   import gsap from "gsap";
