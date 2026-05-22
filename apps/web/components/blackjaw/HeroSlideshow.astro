@@ -29,7 +29,7 @@ const slides = [
       </picture>
       <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/25 pointer-events-none"></div>
       <h1 class="sr-only">{s.heading}</h1>
-      <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-5 sm:px-6">
+      <div class="absolute inset-0 flex flex-col items-center justify-start lg:justify-center pt-28 sm:pt-32 lg:pt-0 text-center text-white px-5 sm:px-6">
         <span
           class="text-[16px] sm:text-[20px] lg:text-[26px] uppercase tracking-[0.22em] sm:tracking-[0.3em] lg:tracking-[0.34em] font-semibold whitespace-nowrap"
           style="text-shadow:0 1px 8px rgba(0,0,0,.7);"
@@ -42,29 +42,30 @@ const slides = [
     </div>
   ))}
 
-  {/* Brand manifesto — desktop-only statement anchored to the bottom-left of the
-      hero. Hidden below lg; the centered eyebrow + CTA sit clear above it. */}
+  {/* Brand manifesto — statement anchored to the bottom-left. On mobile the
+      eyebrow + CTA shift to the upper area so the two zones never collide;
+      the long-form supporting line stays desktop-only. */}
   <div
-    class="hidden lg:block absolute inset-x-0 bottom-0 h-[58%] z-[5] pointer-events-none bg-gradient-to-t from-black/65 via-black/25 to-transparent"
+    class="absolute inset-x-0 bottom-0 h-[58%] z-[5] pointer-events-none bg-gradient-to-t from-black/65 via-black/25 to-transparent"
     aria-hidden="true"
   ></div>
   <div
-    class="hidden lg:flex absolute bottom-0 left-0 max-w-[36rem] pl-24 xl:pl-32 pr-6 pb-16 xl:pb-20 z-10 flex-col pointer-events-none"
+    class="flex absolute bottom-0 left-0 max-w-[36rem] pl-5 sm:pl-6 lg:pl-24 xl:pl-32 pr-6 pb-20 sm:pb-24 lg:pb-16 xl:pb-20 z-10 flex-col pointer-events-none"
     data-blackjaw-slogan
   >
     <span class="blackjaw-slogan-line block h-[3px] w-10 rounded-full bg-bj-primary"></span>
     <p class="blackjaw-slogan-line mt-6 font-[family-name:var(--font-primary)] text-white">
       <span
-        class="block text-[24px] xl:text-[30px] font-medium leading-[1.2] tracking-[-0.01em]"
+        class="block text-[20px] sm:text-[24px] xl:text-[30px] font-medium leading-[1.2] tracking-[-0.01em]"
         style="text-shadow:0 2px 18px rgba(0,0,0,.6);"
       >The real battle is not against others.</span>
       <span
-        class="mt-1.5 block text-[28px] xl:text-[36px] font-semibold leading-[1.12] tracking-[-0.015em]"
+        class="mt-1.5 block text-[24px] sm:text-[28px] xl:text-[36px] font-semibold leading-[1.12] tracking-[-0.015em]"
         style="text-shadow:0 2px 18px rgba(0,0,0,.65);"
       >It’s always you vs you.</span>
     </p>
     <p
-      class="blackjaw-slogan-line mt-5 max-w-[30rem] font-[family-name:var(--font-primary)] text-[14px] xl:text-[15px] font-normal leading-[1.65] text-white/85"
+      class="blackjaw-slogan-line hidden lg:block mt-5 max-w-[30rem] font-[family-name:var(--font-primary)] text-[14px] xl:text-[15px] font-normal leading-[1.65] text-white/85"
       style="text-shadow:0 1px 12px rgba(0,0,0,.7);"
     >Black Jaw stands on your side — not to comfort, to push. To make sure you show up, and follow through.</p>
   </div>
